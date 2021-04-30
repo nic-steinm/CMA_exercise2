@@ -120,6 +120,9 @@ ggplot() +
   coord_sf(datum = 2056)+
   scale_color_manual(name = "Granularity of the trajectory", breaks = c("1 minute", "3 minutes"), values = c("1 minute" = "blue", "3 minutes" = "red"))
 
+#Observation: When increasing the granularity finer movements get lost, whereas the original sampling interval produces clusters with many observations.
+#Even high granularity gives you a good picture where the individuals have been.
+
 #Time-Speed Plot
 ggplot()+
   ggtitle("Time - Speed Plot")+
