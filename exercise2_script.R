@@ -4,9 +4,9 @@ library(ggplot2)
 library(sf)          
 library(terra)        
 library(lubridate)
+library(zoo)
 
-#Task 2
-
+#Task 2 (Task 1 follows)
 wildschwein_BE <- read_delim("data/wildschwein_BE_2056.txt", ",")%>%
   st_as_sf(coords = c("E", "N"), crs = 2056, remove= FALSE) %>%
   group_by(TierID) %>%
@@ -15,8 +15,21 @@ wildschwein_BE <- read_delim("data/wildschwein_BE_2056.txt", ",")%>%
   mutate(timediff = as.numeric(difftime(lead(DatetimeUTC), DatetimeUTC,1)))%>%
   mutate(speed = steplength/timediff)
   
+#Task 1 getting an overview
+ggplot(wildschwein_BE)+
+  geom_point( aes(x = DatetimeUTC, y =timediff/3600, color = TierID))
+  
 
-sum <- summarise(wildschwein_BE, mean_speed = mean(speed, na.rm =T))
+summarise(wildschwein_BE, 
+          mintime = min(DatetimeUTC), 
+          maxtime = max(DatetimeUTC), 
+          timeinterval = difftime(maxtime, mintime),
+          meantime = mean(timediff, na.rm = T))
+    
+#3 Different Boars were tracked
+#They were tracked between 261 and 338 days
+#The Plot shows that they were tracked all at the same time (=concurrently).
+#Typically the sampling intervall is between 15 minutes and 3 hours it is usually similar in all the locations
 
 
 #Task 3
@@ -116,3 +129,28 @@ ggplot()+
   geom_line(data = caro_3, aes(x = DatetimeUTC, y = speed, color ="3 Minutes"))+
   geom_line(data = caro_6, aes(x = DatetimeUTC, y = speed, color ="6 Minutes"))+
   geom_line(data = caro_9, aes(x = DatetimeUTC, y = speed, color ="9 Minutes"))
+
+
+#Task 4
+caro2 <- caro_1 %>%
+  mutate(rm_k3 = rollmean(speed, k= 3, fill = NA, align = "left"),
+          rm_k6 = rollmean(speed, k= 6, fill = NA, align = "left"),
+          rm_k10 = rollmean(speed, k= 10, fill = NA, align = "left"),
+          rm_k25 = rollmean(speed, k= 25, fill = NA, align = "left"))
+
+#Plotting the data
+ggplot(data = caro2)+
+  ggtitle("Rolling mean comparison")+
+  ylab("Speed [m/s]")+
+  xlab("Time")+
+  geom_line(aes(x = DatetimeUTC, y = speed, color ="speed"))+
+  geom_line(aes(x = DatetimeUTC, y = rm_k3, color ="k = 3"))+
+  geom_line(aes(x = DatetimeUTC, y = rm_k6, color ="k = 6"))+
+  geom_line(aes(x = DatetimeUTC, y = rm_k10, color ="k = 10"))+
+  geom_line(aes(x = DatetimeUTC, y = rm_k25, color ="k = 25"))
+
+#Observation: The higher the k-value the smoother the plotted graph
+
+
+
+
