@@ -11,7 +11,13 @@ wildschwein_BE <- read_delim("data/wildschwein_BE_2056.txt", ",") %>%
   st_as_sf(coords = c("E", "N"), crs = 2056, remove= FALSE) %>%
   group_by(TierID) %>%
   
-  mutate(steplength = sqrt((E - lead(E,1))^2 + (N - lead(N,1))^2))%>%
-  mutate(timediff = as.numeric(difftime(lead(DatetimeUTC), DatetimeUTC,1)))
+  mutate(steplength = as.numeric(sqrt((E - lead(E,1))^2 + (N - lead(N,1))^2)))%>%
+  mutate(timediff = as.numeric(difftime(lead(DatetimeUTC), DatetimeUTC,1)))%>%
+  mutate(speed = steplength/timediff) %>%
+  
+
+summarise(wildschwein_BE, mean_speed = mean(speed, na.rm =T))
+
 
 #Task 3
+
