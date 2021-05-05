@@ -25,11 +25,13 @@ summarise(wildschwein_BE,
           maxtime = max(DatetimeUTC), 
           timeinterval = difftime(maxtime, mintime),
           meantime = mean(timediff, na.rm = T))
-    
+  
+#The plot and summary above was used to answer the questions:
+
 #3 Different Boars were tracked
-#They were tracked between 261 and 338 days
+#They were tracked between 261 and 338 days, there are no larger gaps.
 #The Plot shows that they were tracked all at the same time (=concurrently).
-#Typically the sampling intervall is between 15 minutes and 3 hours it is usually similar in all the locations
+#Typically the sampling intervall is between 15 minutes and 3 hours it is usually similar between the individuals.
 
 
 #Task 3
@@ -122,6 +124,10 @@ ggplot() +
 
 #Observation: When increasing the granularity finer movements get lost, whereas the original sampling interval produces clusters with many observations.
 #Even high granularity gives you a good picture where the individuals have been.
+
+#Question: How do I get a square grid in my ggplot? Everything I tried raised an error. What arguments would you use for that? Is there an easier way to create the
+#lines between points without creating a seperate geometry? I had to do some heavy googling and I found an old Github post of Nils that suggested this solution :)
+
 
 #Time-Speed Plot
 ggplot()+
